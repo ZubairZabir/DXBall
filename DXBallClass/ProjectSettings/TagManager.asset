@@ -8,6 +8,9 @@ TagManager:
   - paddle
   - brick
   - sidewall
+  - sideWall
+  - topWall
+  - bottomWall
   layers:
   - Default
   - TransparentFX
