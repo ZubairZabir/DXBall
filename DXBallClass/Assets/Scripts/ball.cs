@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(CircleCollider2D))]
 public class ball : MonoBehaviour
@@ -99,12 +100,42 @@ public class ball : MonoBehaviour
             {
                 Debug.Log("Calling score.addScore(0) for lose condition");
                 score.addScore(0);  // Call ScoreManager first
+                
+                // Add a small delay before deactivating ball to ensure UI updates
+                StartCoroutine(DeactivateBallAfterDelay(0.1f));
             }
             else
             {
                 Debug.LogError("Score manager is null when hitting bottomWall!");
+                gameObject.SetActive(false);
             }
-            gameObject.SetActive(false); // Then deactivate ball
         }
+    }
+
+    // Add this for rigid collision detection (when walls have Rigidbody2D)
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("topWall"))
+        {
+            // Force ball downward when hitting top wall
+            direction.y = -Mathf.Abs(direction.y);
+            Debug.Log("Rigid collision with topWall - forcing downward");
+        }
+        else if (collision.gameObject.CompareTag("sideWall"))
+        {
+            direction.x = -direction.x;
+            Debug.Log("Rigid collision with sideWall");
+        }
+        else if (collision.gameObject.CompareTag("paddle"))
+        {
+            direction.y = -direction.y;
+            Debug.Log("Rigid collision with paddle");
+        }
+    }
+
+    IEnumerator DeactivateBallAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        gameObject.SetActive(false);
     }
 }

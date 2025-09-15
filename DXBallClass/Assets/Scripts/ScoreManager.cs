@@ -6,33 +6,55 @@ public class ScoreManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI winText;
     public GameObject ball;
-    
+    public GameObject paddle;
     int score = 0;
-
+    
     public void addScore(int input)
-    {
+    { 
         if (input == 1)
         {
             score = score + input;
-            scoreText.text = score.ToString() + " Points";
+            scoreText.text = score.ToString() + "Points";
             if (score == 23) // Win when all 23 bricks are destroyed
             {
                 winText.text = "You Win!";
                 ball.SetActive(false);
+                
+                // Stop paddle movement on win as well
+                if (paddle != null)
+                {
+                    var paddleController = paddle.GetComponent<PaddleController>();
+                    if (paddleController != null)
+                    {
+                        paddleController.enabled = false;
+                        Debug.Log("Paddle movement disabled - You Win!");
+                    }
+                }
             }
         }
         else if (input == 0)
         {
-            Debug.Log("ScoreManager: Setting 'You Lose!' message");
-            if (winText != null)
-                winText.text = "You Lose!";
-            else
-                Debug.LogError("winText is null!");
+            winText.text = "Game Over!";
             
-            if (ball != null)
-                ball.SetActive(false); // Ensure ball is inactive when you lose
+            // Stop paddle movement by disabling its script
+            if (paddle != null)
+            {
+                // Disable the paddle controller script specifically
+                var paddleController = paddle.GetComponent<PaddleController>();
+                if (paddleController != null)
+                {
+                    paddleController.enabled = false;
+                    Debug.Log("Paddle movement disabled - Game Over!");
+                }
+                else
+                {
+                    Debug.LogError("PaddleController component not found on paddle!");
+                }
+            }
             else
-                Debug.LogError("ball reference is null!");
+            {
+                Debug.LogError("Paddle reference is null!");
+            }
         }
     }
 }
