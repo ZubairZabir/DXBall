@@ -131,7 +131,7 @@ public class ball : MonoBehaviour
             direction.y = -direction.y;
             Debug.Log("Rigid collision with paddle");
         }
-    }
+uction    }
 
     IEnumerator DeactivateBallAfterDelay(float delay)
     {
